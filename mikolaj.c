@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 // według wikipedii, zaprzęg Świętego Mikołaja liczy 9 reniferów
+
 // "Jest Waleczny, i Walczyk, i Strzała, i Swarek
 // Zefir, Kupidyn, Kometa i Śmiałek
 // Sławą przyćmił ich
@@ -29,6 +30,7 @@ int main()
     init();
     join();
 
+    printf("Koniec\n");
 }
 
 void init()
@@ -102,33 +104,42 @@ void *santa(void *arg)
     {
         pthread_mutex_lock(&santaMutex);
         printf("Mikolaj spi\n");
-        pthread_cond_broadcast(&countCond);
         pthread_cond_wait(&santaCond, &santaMutex);
         if(reindeerReady)
         {
-            pthread_mutex_lock(&reindeerMutex);
             printf("Mikolaja budza renifery\n");
             printf("Mikolaj zaprzega renifery\n");
             printf("Mikolaj dostarcza zabawki\n");
-            sleep(1);
+            sleep(2);
             printf("Mikolaj wyprzega renifery\n");
             reindeerCount = 0;
             reindeerReady = false;
-            pthread_mutex_unlock(&reindeerMutex);
+            if(gnomeReady)
+                printf("Mikolaj spi\n");
         }
         if(gnomeReady)
         {
-            pthread_mutex_lock(&gnomeMutex);
             printf("Mikolaja budza skrzaty\n");
             printf("Mikolaj wpuszcza do biura %d skrzatow\n", gnomeCount);
             printf("Mikolaj obsluguje skrzaty\n");
+            sleep(1);
             printf("Mikolaj wypuszcza skrzaty\n");
             gnomeCount = 0;
             gnomeReady = false;
-            pthread_mutex_unlock(&gnomeMutex);
+            if(reindeerReady)
+                printf("Mikolaj spi");
         }
         pthread_mutex_unlock(&santaMutex);
     }
+    pthread_mutex_lock(&santaMutex);
+    for(int i = 0; i < 9; i++)
+        pthread_cancel(reindeerID[i]);
+    
+    for(int i = 0; i < 10; i++)
+        pthread_cancel(gnomeID[i]);
+    pthread_mutex_unlock(&santaMutex);
+
+    pthread_exit(0);
 }
 
 void *gnome(void *arg)
@@ -137,17 +148,18 @@ void *gnome(void *arg)
 
     while(1)
     {
-        pthread_mutex_lock(&gnomeMutex);
-        pthread_cond_wait(&countCond, &gnomeMutex);
+        pthread_mutex_lock(&santaMutex);
         if(gnomeCount < 10)
+        {
             gnomeCount++;
+            printf("Czeka %d skrzatow\n", gnomeCount);
+        }
         if(gnomeCount >= 3)
         {
             gnomeReady = true;
             pthread_cond_signal(&santaCond);
         }
-        printf("Czeka %d skrzatow\n", gnomeCount);
-        pthread_mutex_unlock(&gnomeMutex);
+        pthread_mutex_unlock(&santaMutex);
     }
     
 }
@@ -158,18 +170,17 @@ void *reindeer(void *arg)
 
     while(1)
     {
-        pthread_mutex_lock(&reindeerMutex);
-        pthread_cond_wait(&countCond, &reindeerMutex);
+        pthread_mutex_lock(&santaMutex);
         if(reindeerCount < 9)
-            reindeerCount++;     
+        {
+            reindeerCount++;
+            printf("Czeka %d reniferow\n", reindeerCount);
+        }     
         else
         {
             reindeerReady = true;
             pthread_cond_signal(&santaCond);
         }
-        printf("Czeka %d reniferow\n", reindeerCount);
-        pthread_mutex_unlock(&reindeerMutex); 
+        pthread_mutex_unlock(&santaMutex); 
     }
 }
-
-

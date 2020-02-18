@@ -4,17 +4,9 @@
 #include <pthread.h>
 #include <stdbool.h>
 
-// według wikipedii, zaprzęg Świętego Mikołaja liczy 9 reniferów
-
-// "Jest Waleczny, i Walczyk, i Strzała, i Swarek
-// Zefir, Kupidyn, Kometa i Śmiałek
-// Sławą przyćmił ich
-// Rudolf z nosem co w mroku lśni"
-//                              Zbigniew Wodecki
-
 pthread_t santaClausID, gnomeID[10], reindeerID[9];
-pthread_mutex_t santaMutex, gnomeMutex, reindeerMutex;
-pthread_cond_t santaCond, countCond;
+pthread_mutex_t santaMutex;
+pthread_cond_t santaCond;
 
 int gnomeCount = 0, reindeerCount = 0;
 bool gnomeReady = false, reindeerReady = false;
@@ -41,27 +33,9 @@ void init()
         exit(1);
     }
 
-    if(pthread_mutex_init(&gnomeMutex, NULL) != 0)
-    {
-        perror("Utworzenie mutexa skrzata");
-        exit(1);
-    }
-
-    if(pthread_mutex_init(&reindeerMutex, NULL) != 0)
-    {
-        perror("Utworzenie mutexa renifera");
-        exit(1);
-    }
-
     if(pthread_cond_init(&santaCond, NULL) != 0)
     {
         perror("Utworzenie zmiennej warunkowej mikolaja");
-        exit(1);
-    }
-
-    if(pthread_cond_init(&countCond, NULL) != 0)
-    {
-        perror("Utworzenie zmiennej warunkowej liczacej");
         exit(1);
     }
 

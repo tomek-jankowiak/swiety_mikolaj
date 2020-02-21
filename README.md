@@ -12,4 +12,4 @@ Skompilowany projekt uruchamia się przez './run'. Program nie wczytuje żadnyc
 parametrów wejściowych.
 
 OPIS PLIKÓW .c
-Całość rozwiązania znajduje się w pliku mikolaj.c.
+Całość rozwiązania znajduje się w pliku main.c.

@@ -7,7 +7,7 @@ KOMPILACJA
 Kod kompiluje się przez komendę 'make' lub 'make all'.
 Usunięcie plików binarnych - 'make clean'
 
-URUCHOMIENIE
+URUCHOMIENIE 
 Skompilowany projekt uruchamia się przez './run'. Program nie wczytuje żadnych
 parametrów wejściowych.
 

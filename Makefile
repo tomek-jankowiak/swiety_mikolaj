@@ -1,4 +1,4 @@
-all: mikolaj.c
+all: main.c
 	gcc main.c -pthread -o run -Wall
 
 clean:

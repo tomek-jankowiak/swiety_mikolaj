@@ -4,6 +4,8 @@
 #include <pthread.h>
 #include <stdbool.h>
 
+#define AMOUNT_OF_ITERATIONS 5
+
 pthread_t santaClausID, gnomeID[10], reindeerID[9];
 pthread_mutex_t santaMutex;
 pthread_cond_t santaCond;
@@ -74,7 +76,7 @@ void *santa(void *arg)
 {
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
-    for(int i = 0; i < 5; i++)
+    for(int i = 0; i < AMOUNT_OF_ITERATIONS; i++)
     {
         pthread_mutex_lock(&santaMutex);
         printf("Mikolaj spi\n");

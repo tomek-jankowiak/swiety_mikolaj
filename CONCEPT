@@ -1,0 +1,32 @@
+REALIZACJA ZADANIA 'ŚWIĘTY MIKOŁAJ'
+
+1. MECHANIZMY KOMUNIKACJI I SYNCHRONIZACJI 
+Do realizacji zadania użyty został jeden mutex 'santaMutex' oraz jedna zmienna warunkowa 'santaCond'.
+Mutexem zabezpieczone są: 
+- obsługa reniferów lub skrzatów przez Mikołaja
+- inkrementacja ilości skrzatów oraz reniferów
+Zmienna warunkowa eliminuje problem aktywnego czekania Mikołaja, wątek zasypia i obudzi się dopiero, gdy dostanie sygnał od innego wątku.
+Wątki używają odpowiednich zmiennych globalnych. Są to:
+- gnomeCount i reindeerCount - służące do przechowywania ilości skrzatów i reniferów w kolejce
+- gnomeReady i reindeerReady - zmienne typu bool informujące Mikołaja, która 'grupa' jest gotowa do obsłużenia.
+
+2. WĄTKI
+Święty mikołaj, każdy z 9 reniferów oraz każdy z 10 skrzatów reprezentowani są przez osobne wątki.
+Warunkiem końca programu jest wykonanie się określonej liczby iteracji wątku Mikołaja (parametr AMOUNT_OF_ITERATIONS zdefiniowany na samej górze kodu źródłowego, zaraz pod załączonymi bibliotekami).
+
+2.1 WĄTEK MIKOŁAJA
+Zadaniem wątku Mikołaja jest obsługa skrzatów lub reniferów w skończonej pętli for (ilość iteracji zależna od parametru opisanego wyżej). 
+Mikołaj na początku każdej iteracji 'śpi' czekając na sygnał zmiennej warunkowej.
+Po wybudzeniu pod wpływem sygnału sprawdza wartość zmiennych globalnych typu bool, mówiących mu o gotowości reniferów lub skrzatów. Renifery są sprawdzane pierwsze, ponieważ obsługa ich ma wyższy priortet.
+Podczas obsługi danej 'grupy' wyświetlane są na standardowym wyjściu komunikaty, następuje zerowanie zmiennej służącej do zliczania oraz odpowiednia zmienna boolowska przyjmuje wartość 'false'.
+Dodatkowo po zakończeniu pętli for wątek Mikołaja jest odpowiedzialny za zatrzynanie wszystkich wątków reniferów oraz skrzatów, a następnie samego siebie.
+
+1.2 WĄTEK SKRZATA
+Zadaniem wątku skrzata jest inkrementacja zmiennej globalnej gnomeCount, reprezentującej ilosć skrzatów w kolejce do biura Mikołaja.
+Jeśli wartość zmiennej przekroczy 3, zostanie wysłany sygnał do zmiennej warunkowej w celu wybudzenia Mikołaja, a zmienna odpowiednia zmienna typu bool przyjmie wartość 'true'.
+Całość operacji zabezpieczona jest mutexem.
+
+1.3 WĄTEK RENIFERA
+Wątek renifera działa analogicznie do wątku skrzata. Dopóki zmienna reindeerCount jest mniejsza od 9, jest ona inkrementowana, natomiast gdy osiągnie wartosć 9, do Mikołaja wysylany jest sygnał wybudzenia.
+Tutaj również całość operacji jest zabezpieczona tym samym mutexem.
+
